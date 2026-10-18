@@ -28,9 +28,9 @@ DSH sessions leave a trail of one-off scripts and logs — `fix-xxx.ps1`, `upgra
 | --- | --- | --- |
 | `closet_register` | Register a script: path, purpose, language, status | ledger only |
 | `closet_list` | List the ledger, flag entries whose file is gone | no |
-| `closet_scan` | Scan the workspace for leftovers with reasons | **no** |
+| `closet_scan` | Scan the workspace for leftovers with reasons; `skipTracked: true` hides git-tracked files entirely | **no** |
 | `closet_run` | Execute a registered script, capture output to a log | log only |
-| `closet_clean` | Move listed files into trash (restorable) | moves |
+| `closet_clean` | Move listed files into trash (restorable); **git-tracked files are rejected** unless `force: true` | moves |
 | `closet_trash` | Inspect batches; `expire: true` prunes old ones (dry-run first) | only on expiry |
 | `closet_logs` | List a script's logs, or tail one | no |
 
@@ -70,7 +70,7 @@ An `ignore` entry that cannot be parsed is dropped rather than treated as "ignor
 ## Development
 
 ```bash
-npm test           # 85 unit cases + 16 end-to-end smoke checks + docs consistency; zero dependencies
+npm test           # 99 unit cases + 16 end-to-end smoke checks + docs consistency; zero dependencies
 npm run test:unit
 npm run lint:syntax
 ```

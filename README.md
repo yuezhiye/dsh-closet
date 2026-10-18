@@ -35,9 +35,9 @@ DSH 干活时会留下大量临时脚本和日志 —— `fix-xxx.ps1`、`upgrad
 | --- | --- | --- |
 | `closet_register` | 登记一个脚本：路径、用途、语言、状态（active/done/obsolete） | 只写登记册 |
 | `closet_list` | 列出登记册，并标注「文件还在不在」 | 否 |
-| `closet_scan` | 扫描工作区，列出疑似遗留物及判定理由 | **否** |
+| `closet_scan` | 扫描工作区，列出疑似遗留物及判定理由；`skipTracked: true` 可完全不显示已被 git 跟踪的文件 | **否** |
 | `closet_run` | 按语言执行登记过的脚本，输出写进日志 | 只写日志 |
-| `closet_clean` | 把指定文件移进回收站（可还原） | 移动 |
+| `closet_clean` | 把指定文件移进回收站（可还原）；**已被 git 跟踪的文件会被拒收**，确需清运要带 `force: true` | 移动 |
 | `closet_trash` | 查看回收站批次；`expire: true` 才做过期清理（默认预演） | 只在过期清理时删除 |
 | `closet_logs` | 列出某个脚本的执行日志，或读取某份日志的末尾 | 否 |
 
@@ -102,6 +102,7 @@ dsh-closet:
 ## 安全设计
 
 - **不会误删**：`closet_clean` 只移动；真正删除只有 `closet_trash { expire: true }` 一条路，默认 `dryRun`。
+- **不动版本库里的东西**：扫描会照常列出已被 git 跟踪的文件（标 `tracked` + 「⚠ 已被 git 跟踪」），但判定固定为「待确认」，`closet_clean` 默认整批拒收；确需处理要显式带 `force: true`。工作区不是 git 仓库或本机没装 git 时，保护自动降级并在结果里明说。
 - **不会越界**：只能处理**工作区内**的文件；`..` 穿越、大小写变体、软链接/目录联接绕过都被拦截（字面路径与真实路径双重校验）。
 - **不会扫穿**：`node_modules`、`.git` 等默认跳过，软链接不跟随，深度与文件数有上限。
 - **不会写坏**：`registry.json` 走「写临时文件 → rename」的原子写；文件损坏时先改名留存现场再重建。
@@ -110,7 +111,7 @@ dsh-closet:
 ## 开发
 
 ```bash
-npm test           # 单测 85 + 端到端冒烟 16 + 文档一致性；零依赖，全用 Node 内置 test runner
+npm test           # 单测 99 + 端到端冒烟 16 + 文档一致性；零依赖，全用 Node 内置 test runner
 npm run test:unit  # 只跑单测
 npm run lint:syntax
 ```
