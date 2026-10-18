@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "yuezhiye-dsh-closet",
+  "version": "0.1.0",
+  "description": "收纳间 · DSH 插件的临时脚本与日志管理器：按工作区登记脚本、只读扫描遗留物、一键清运进可还原回收站。",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "closet",
+    "cleanup",
+    "script-manager",
+    "log-manager",
+    "trash",
+    "workspace-hygiene"
+  ],
+  "license": "MIT",
+  "author": "yuezhiye",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json",
+    "./store": "./lib/store.js",
+    "./scan": "./lib/scan.js",
+    "./run": "./lib/run.js",
+    "./trash": "./lib/trash.js"
+  },
+  "files": [
+    "lib/",
+    "cordis.patch.yml",
+    "locale/",
+    "icon.svg",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "icon": "./icon.svg",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuezhiye/dsh-closet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuezhiye/dsh-closet/issues"
+  },
+  "homepage": "https://github.com/yuezhiye/dsh-closet#readme",
+  "engines": {
+    "node": ">=18",
+    "dsh": ">=0.2.0-rc.0 <0.3.0-0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1 || >=4.0.5-0 <5",
+    "@deepseek-ai/dsh-tools": ">=0.2.0-rc.0 <0.3.0-0",
+    "@deepseek-ai/dsh-llm": ">=0.2.0-rc.0 <0.3.0-0",
+    "@deepseek-ai/dsh-client-locale": ">=0.2.0-rc.0 <0.3.0-0",
+    "@deepseek-ai/dsh-client-ui-settings": ">=0.2.0-rc.0 <0.3.0-0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-locale": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-ui-settings": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\" && node test/smoke.mjs && node test/docs-check.mjs",
+    "test:unit": "node --test \"test/*.test.js\"",
+    "test:watch": "node --test --watch \"test/*.test.js\"",
+    "lint:syntax": "node --check lib/index.js && node --check lib/routes.js && node --check lib/client.js"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "_注释": [
+    "scripts 用带引号的 glob 而不是『node --test test/』：Node 22+ 传目录会把它当模块入口解析，报 Cannot find module .../test；测试文件统一命名 *.test.js。",
+    "icon 必须是包内相对路径（不能是 emoji 或 URL），格式限 SVG/PNG/JPEG/WebP 且 ≤256KiB。",
+    "engines.dsh 一旦声明，@deepseek-ai/dsh* 的 peerDependencies 就不再参与内核兼容判定（dsh-app-boot 的 if/else），所以范围要自己定得合理：整个 0.2 大版本放行，避免内核打补丁就整插件被拒。",
+    "peerDependencies 只是给 pnpm 解析用的声明，全部 optional，不实际安装内核包。",
+    "files 必须包含 cordis.patch.yml，否则安装后校验 dsh.bundle 会 not-bundle 失败并回滚。",
+    "客户端入口只由 exports[\"./client\"] 决定，没有 dsh.client.entry/files 这种字段；dsh.client 只认 platform/inject/external/immediately 四个键，未知键被静默忽略。",
+    "dsh.client.inject 只列真的会用的：ui-settings 声明 settings.section 槽，locale 提供中文文案。react 在外壳基座模块表里，不必列。写错包名会让整张启动图组合失败。"
+  ]
+}

@@ -1,0 +1,29 @@
+# 依赖与构建产物（本插件无构建产物，直接发布 lib/ 源码）
+node_modules/
+dist/
+
+# 测试与本地调试产物
+coverage/
+*.test.tmp.js
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地临时文件（通用）
+*.log
+!docs/*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# npm 发布产物
+*.tgz
+.npm/
+
+# 工作区收纳间（本插件自己的数据目录，绝不进版本库）
+.dsh-fix/

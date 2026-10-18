@@ -1,0 +1,25 @@
+# dsh-closet —— 工作区脚本登记册与日志管理
+#
+# 该文件由 package.json 的 dsh.bundle.patch 指向，安装后自动插入一行插件 entry。
+# 注意：文件不能为空、也不能只剩注释，否则启动会失败（要禁用这一层请写 `[]`）。
+- insert:
+    - id: dsh-closet
+      name: 'yuezhiye-dsh-closet'
+      config:
+        enabled: true
+        # 数据目录名，相对工作区根（登记册、日志、回收站都放这里）
+        dataDir: '.dsh-fix'
+        # 回收站保留天数；到期批次的处理方式见 expireTrash
+        trashRetentionDays: 30
+        # 扫描时额外忽略的目录名（叠加在内置 node_modules/.git 之上）
+        ignore: []
+        # 扫描结果上限（防误把大目录整个扫一遍）
+        maxScanFiles: 5000
+        # 单次 scans 的深度上限
+        maxScanDepth: 64
+        # 单次脚本执行超时（毫秒）
+        runTimeoutMs: 120000
+        # 日志文件最大字节数（超出后不再追加到本次输出缓冲，落盘仍继续）
+        maxLogBytes: 2097152
+        # 解释器绝对路径覆盖，例如 { "pwsh": "C:\\Program Files\\PowerShell\\7\\pwsh.exe" }
+        interpreters: {}

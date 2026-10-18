@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Closet",
+    "description": "Register, scan and clear temporary scripts and logs inside a workspace. Scan is read-only; cleaning moves files into a restorable trash."
+  }
+}

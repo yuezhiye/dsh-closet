@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="dsh-closet">
+  <title>dsh-closet</title>
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7fb5"/>
+      <stop offset="100%" stop-color="#2b4d70"/>
+    </linearGradient>
+    <linearGradient id="door" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7fb3e0"/>
+      <stop offset="100%" stop-color="#4a7fb5"/>
+    </linearGradient>
+  </defs>
+  <!-- 柜体 -->
+  <rect x="8" y="12" width="48" height="44" rx="5" fill="url(#body)"/>
+  <!-- 中线 -->
+  <rect x="31" y="12" width="2" height="44" fill="#1b3247" opacity="0.55"/>
+  <!-- 两扇门 -->
+  <rect x="11" y="15" width="19" height="38" rx="3" fill="url(#door)" opacity="0.9"/>
+  <rect x="34" y="15" width="19" height="38" rx="3" fill="url(#door)" opacity="0.9"/>
+  <!-- 把手 -->
+  <rect x="27" y="31" width="2.5" height="8" rx="1.25" fill="#e8f2fb"/>
+  <rect x="34.5" y="31" width="2.5" height="8" rx="1.25" fill="#e8f2fb"/>
+  <!-- 顶部把手条 -->
+  <rect x="24" y="8" width="16" height="4" rx="2" fill="#2b4d70"/>
+  <!-- 一根水花，鲸鱼娘签名 -->
+  <path d="M46 6 q3 -5 7 -3 q-4 1 -5 5 z" fill="#8fd2f0" opacity="0.85"/>
+</svg>
