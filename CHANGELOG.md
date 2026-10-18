@@ -2,6 +2,21 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] - 2026-10-18
+
+### 新增
+
+- **git 跟踪保护**（`lib/git.js`）：扫描照常列出已被版本库跟踪的文件，但标 `tracked` + 追加「⚠ 已被 git 跟踪」，判定固定为 `review`；`closet_clean` 默认整批拒收被跟踪文件（全部被拦时抛 `CLOSET_TRACKED_FILE`），确需处理要显式 `force: true`；`closet_scan` 的 `skipTracked: true` 可完全不显示它们。`git ls-files` 结果带 15 秒 TTL 缓存并合并并发请求，任何 git 失败都降级为「保护未生效」并在输出里明说。
+- 面板：被跟踪行显示「git 已跟踪」标签且复选框禁用，并新增「隐藏已被 git 跟踪的文件」开关。
+
+### 修复
+
+- `resolveWorkspace` 只认 `ctx.get('workingDirectory').path`，当宿主给的是字符串时会静默回退到 `process.cwd()`，导致工具在不带 `workspace` 参数时操作错目录。
+
+### 测试
+
+- 新增 `test/git-protect.test.js`（9 条）与 `test/clean-git.test.js`（5 条），单测 85 → 99 全绿。
+
 ## [0.1.0] - 2026-10-18
 
 首个可用版本。

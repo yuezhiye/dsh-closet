@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "yuezhiye-dsh-closet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "收纳间 · DSH 插件的临时脚本与日志管理器：按工作区登记脚本、只读扫描遗留物、一键清运进可还原回收站。",
   "keywords": [
     "dsh",
@@ -97,7 +97,8 @@
     }
   },
   "_注释": [
-    "dsh.manifestVersion 与 engines.dsh 内核目前不强制校验（dsh-package-manifest README 明说），保留是为了将来收紧时不用改包。",    "repository 地址即 GitHub 公开仓库；插件市场收录要另外向 awesome-dsh-plugin/awesome-dsh-plugin 提 PR（没有 npm 关键字自动发现）。",         
+    "dsh.manifestVersion 与 engines.dsh 内核目前不强制校验（dsh-package-manifest README 明说），保留是为了将来收紧时不用改包。",
+    "repository 地址即 GitHub 公开仓库；插件市场收录要另外向 awesome-dsh-plugin/awesome-dsh-plugin 提 PR（没有 npm 关键字自动发现）。",
     "scripts 用带引号的 glob 而不是『node --test test/』：Node 22+ 传目录会把它当模块入口解析，报 Cannot find module .../test；测试文件统一命名 *.test.js。",
     "icon 必须是包内相对路径（不能是 emoji 或 URL），格式限 SVG/PNG/JPEG/WebP 且 ≤256KiB。",
     "engines.dsh 一旦声明，@deepseek-ai/dsh* 的 peerDependencies 就不再参与内核兼容判定（dsh-app-boot 的 if/else），所以范围要自己定得合理：整个 0.2 大版本放行，避免内核打补丁就整插件被拒。",
