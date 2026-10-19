@@ -2,6 +2,12 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.1.5] - 2026-10-19
+
+### 修复
+
+- **面板表格里的判定标签被挤成两行**：窗口或设置页较窄时，「待确认」会折成「待确 / 认」。标签现在强制 `white-space: nowrap` 且 `display: inline-block`；同时新增 `tdFit`（`width:1%; white-space:nowrap`）应用到「勾选框 / 大小 / 判定」这类定宽不需要拉伸的列，让浏览器把剩余宽度全部让给「文件」与「理由」；文件列改 `word-break: break-all`，长路径在单元格内正常换行而不是撑破表格。回收站表格的「条目 / 体积 / 还原」三列同样按内容定宽，批次号列允许折断。
+
 ## [0.1.4] - 2026-10-19
 
 ### 修复

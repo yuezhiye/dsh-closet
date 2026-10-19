@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "yuezhiye-dsh-closet",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "收纳间 · DSH 插件的临时脚本与日志管理器：按工作区登记脚本、只读扫描遗留物、一键清运进可还原回收站。",
   "keywords": [
     "dsh",
