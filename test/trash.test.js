@@ -6,7 +6,7 @@ import path from 'node:path';
 
 import { closetPaths, pathKey } from '../lib/store.js';
 import { moveToTrash, listTrash, restoreBatch, expireTrash } from '../lib/trash.js';
-import { makeTempDir, removeDir, cleanupTempDirs } from './helpers.js';
+import { makeTempDir, makeTempDirIn, removeDir, cleanupTempDirs } from './helpers.js';
 
 const isWin = process.platform === 'win32';
 const dirs = [];
@@ -57,17 +57,23 @@ test('moveToTrash：中文名与含空格文件能被移入，manifest 正确，
 });
 
 test('moveToTrash：工作区外的文件被拒绝（.. 穿越、大小写变体、绝对路径都挡）', async () => {
-  const ws = newWorkspace();
-  const outside = makeTempDir('outside');
-  dirs.push(outside);
+  // 「逃逸」文件必须放在独立子目录里，不能直接丢在 testtmp/run 根下：
+  // node --test 会并行跑多个测试文件，别的进程启动时 makeTempDir 的 sweepStale
+  // 会无条件删掉 base 根下的非目录条目，否则这条用例会随机假失败。
+  const outer = makeTempDir('outer');
+  dirs.push(outer);
+  // ws 与 outside 是兄弟目录，这样 `ws/../outside/secret.txt` 真的是一个存在的工作区外文件，
+  // 才能验证「路径穿越被挡」而不是「文件不存在被挡」。
+  const ws = makeTempDirIn(outer, 'ws');
+  const outside = makeTempDirIn(outer, 'outside');
   const secret = await put(outside, 'secret.txt', 'SECRET');
-  const parentFile = await put(path.dirname(ws), `escape-${path.basename(ws)}.txt`, 'PARENT');
+  const parentFile = await put(outer, 'escape.txt', 'PARENT');
   dirs.push(parentFile);
 
   const sneaky = [
     secret,
-    path.join(ws, '..', path.basename(path.dirname(ws), '') && path.basename(outside), 'secret.txt'),
     path.join(ws, '..', path.basename(outside), 'secret.txt'),
+    path.join(ws, '..', '..', path.basename(path.dirname(outside)), path.basename(outside), 'secret.txt'),
     parentFile,
   ].map((p) => ({ path: p }));
 
