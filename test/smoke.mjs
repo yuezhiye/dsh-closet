@@ -219,14 +219,18 @@ try {
     }
   });
 
-  const fakeRequest = (url, { method = 'GET', headers = {} } = {}) => ({
+  const fakeRequest = (url, { method = 'GET', headers = {}, body = '{}' } = {}) => ({
     url,
     method,
     headers: { host: '127.0.0.1:53543', ...headers },
     on(event, cb) {
-      if (event === 'data') cb(Buffer.from('{}'));
+      if (event === 'data') cb(Buffer.from(body));
       if (event === 'end') cb();
       return this;
+    },
+    // readJsonBody 用的是 for await (const chunk of request)，必须给异步迭代器
+    async *[Symbol.asyncIterator]() {
+      yield Buffer.from(body);
     },
   });
 
@@ -281,6 +285,50 @@ try {
     const { status, body } = await hit(`${API_BASE}/trash${wsQuery}`);
     assert(status === 200, `HTTP ${status}`);
     assert(Array.isArray(body.batches), 'batches 不是数组');
+  });
+
+  /* 面板清运走的是 POST /clean，此前没有任何测试覆盖这条路 —— 于是
+     「路由把路径字符串数组直接交给 moveToTrash、每项都被当空路径跳过」
+     这个 bug 一路上没人拦。这里用真实 HTTP 形状把整条链路走一遍。 */
+  await check('POST /clean 真的把文件搬进回收站，且回收站统计不再为 0', async () => {
+    writeFileSync(join(workspace, 'panel-clean.ps1'), 'Write-Output "panel"\n');
+    writeFileSync(join(workspace, 'panel-clean2.bak'), 'bak\n');
+
+    const { status, body } = await hit(`${API_BASE}/clean${wsQuery}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        workspace,
+        paths: [join(workspace, 'panel-clean.ps1'), join(workspace, 'panel-clean2.bak')],
+        reason: '冒烟：面板清运',
+      }),
+    });
+    assert(status === 200, `HTTP ${status} ${JSON.stringify(body)}`);
+    assert(body.ok === true, 'ok 不为 true');
+    assert(body.moved.length === 2, `只搬了 ${body.moved.length} 项，应为 2`);
+    assert(body.failed.length === 0, `有失败项：${JSON.stringify(body.failed)}`);
+    assert(!existsSync(join(workspace, 'panel-clean.ps1')), 'panel-clean.ps1 还在原地');
+    assert(!existsSync(join(workspace, 'panel-clean2.bak')), 'panel-clean2.bak 还在原地');
+
+    const listed = await hit(`${API_BASE}/trash${wsQuery}`);
+    assert(listed.status === 200, `HTTP ${listed.status}`);
+    const batch = listed.body.batches.find((b) => b.batch === body.batch);
+    assert(batch, `回收站里找不到批次 ${body.batch}`);
+    assert(batch.count === 2, `批次条目数是 ${batch.count}，应为 2`);
+    assert(batch.bytes > 0, `批次体积是 ${batch.bytes}，应大于 0`);
+  });
+
+  await check('POST /clean 全失败时不留下空批次', async () => {
+    const before = (await hit(`${API_BASE}/trash${wsQuery}`)).body.batches.length;
+    const { status, body } = await hit(`${API_BASE}/clean${wsQuery}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ workspace, paths: [join(workspace, 'no-such-file.txt')] }),
+    });
+    assert(status === 200, `HTTP ${status}`);
+    assert(body.moved.length === 0, '不存在的文件不该被搬走');
+    const after = (await hit(`${API_BASE}/trash${wsQuery}`)).body.batches;
+    assert(after.length === before, `空批次污染了回收站清单（${before} → ${after.length}）`);
   });
 
   await check('跨站请求被拒（sec-fetch-site: cross-site）', async () => {

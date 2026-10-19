@@ -70,7 +70,7 @@ An `ignore` entry that cannot be parsed is dropped rather than treated as "ignor
 ## Development
 
 ```bash
-npm test           # 106 unit cases + 16 end-to-end smoke checks + docs consistency; zero dependencies
+npm test           # 108 unit cases + 18 end-to-end smoke checks + docs consistency; zero dependencies
 npm run test:unit
 npm run lint:syntax
 ```

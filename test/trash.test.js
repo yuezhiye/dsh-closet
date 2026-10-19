@@ -132,15 +132,47 @@ test('moveToTrash：同名不同目录的文件互不覆盖；目录与非普通
   assert.deepEqual(bodies.sort(), ['ONE', 'TWO']);
 });
 
-test('moveToTrash：不存在的文件进 failed 且不抛错；items 为空时也写出空 manifest', async () => {
+test('moveToTrash：不存在的文件进 failed 且不抛错；一个都没搬成时不留下空批次', async () => {
   const ws = newWorkspace();
   const r = await moveToTrash(ws, [{ path: path.join(ws, 'nope.txt') }], { root: ws });
   assert.equal(r.moved.length, 0);
   assert.match(r.failed[0].error, /无法读取/);
+  assert.equal(r.batch, null, '没搬成任何文件时不应生成批次名');
+  assert.equal(r.batchDir, null, '没搬成任何文件时不应生成批次目录');
+
+  // 空批次会污染回收站清单（显示 0 条目 0 体积），必须是干净的
+  assert.deepEqual(await listTrash(ws), []);
 
   const empty = await moveToTrash(ws, [], { root: ws });
   assert.equal(empty.moved.length, 0);
-  assert.ok(fs.existsSync(path.join(empty.batchDir, 'manifest.json')));
+  assert.equal(empty.batchDir, null);
+});
+
+test('moveToTrash：items 传纯字符串数组也能搬（路由层/面板走这条路径）', async () => {
+  const ws = newWorkspace();
+  const a = await put(ws, 'str-a.txt', 'AAA');
+  const b = await put(ws, 'str-b.txt', 'BB');
+  // 面板 POST /clean 传的是 ['绝对路径', ...]，历史实现只认 {path} 对象，
+  // 于是每项都被当成「空路径」跳过 —— 面板清运永远搬不动文件。
+  const r = await moveToTrash(ws, [a, b], { root: ws, label: 'panel' });
+  assert.equal(r.moved.length, 2, '字符串数组必须能正常搬走');
+  assert.equal(r.failed.length, 0);
+  assert.ok(r.batch);
+  assert.equal(fs.existsSync(a), false);
+  assert.equal(fs.existsSync(b), false);
+
+  const list = await listTrash(ws);
+  assert.equal(list.length, 1);
+  assert.equal(list[0].count, 2);
+  assert.equal(list[0].bytes, 5);
+});
+
+test('moveToTrash：字符串里的空串/空白项不会造出空批次', async () => {
+  const ws = newWorkspace();
+  const r = await moveToTrash(ws, ['', '   '], { root: ws });
+  assert.equal(r.moved.length, 0);
+  assert.equal(r.batch, null);
+  assert.deepEqual(await listTrash(ws), []);
 });
 
 // ---------------------------------------------------------------- 列出
