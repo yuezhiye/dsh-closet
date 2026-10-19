@@ -2,6 +2,22 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.1.2] - 2026-10-19
+
+### 修复
+
+- **插件无法启动的致命 bug**：`lib/config.js` 在拿不到 `@deepseek-ai/schemastery` 时把 `Config` 退化成纯函数 `(value) => normalizeConfig(value)`，而内核用 `isNativeConfigSchema` 判定配置时要求四条同时成立（对象或函数 / `Symbol.for("schemastery") === true` / `type` 是字符串 / `meta` 是非 null 对象），纯函数一条都不满足，于是加载即报 `dsh: error: Config is not a native Schemastery schema` 并把该插件标记为 `unsupported`。改为手写满足四条件的兼容 schema（`validate` 委托 `normalizeConfig`，并带 Standard Schema 的 `~standard.validate`），拿不到 schemastery 也不会失配。
+- 说明：`@deepseek-ai/schemastery` 并不在 profile 的 `node_modules` 里（它打包在 `app.asar` 内），因此这里的兜底分支是常态路径而不是罕见路径。
+
+### 新增
+
+- `lib/config.js` 导出 `CONFIG_FIELDS`（每个配置项的键名、类型、说明、默认值），供面板与文档共用同一份真源。
+
+### 测试
+
+- 新增 `test/config-schema.test.js`（7 条）：逐字复刻内核的 `isNativeConfigSchema` 四条判定，钉住「四条件必须全中」，并用反面用例锁死「纯函数式 Config」这个错误写法。单测 99 → 106 全绿。
+- 真装验证（沙盒 profile `closet-test`）：`dsh --profile closet-test --dump-config-schema` 从 exit=1、`status: "unsupported"`、`Config is not a native Schemastery schema`，变为 **exit=0、`status: "schema"`、`diagnostics: []`**。
+
 ## [0.1.1] - 2026-10-18
 
 ### 新增

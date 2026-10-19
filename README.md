@@ -111,7 +111,7 @@ dsh-closet:
 ## 开发
 
 ```bash
-npm test           # 单测 99 + 端到端冒烟 16 + 文档一致性；零依赖，全用 Node 内置 test runner
+npm test           # 单测 106 + 端到端冒烟 16 + 文档一致性；零依赖，全用 Node 内置 test runner
 npm run test:unit  # 只跑单测
 npm run lint:syntax
 ```
@@ -124,7 +124,7 @@ lib/
 ├── scan.js     遗留物扫描（只读）
 ├── run.js      多语言执行（spawn + 日志 + 超时 + 进程树强杀）
 ├── trash.js    回收站（移动/还原/过期清理）
-├── config.js   配置归一化与 schemastery 兜底
+├── config.js   配置归一化 + 原生 Schemastery schema（拿不到内核依赖时用自带的兼容 schema）
 ├── routes.js   HTTP 面板接口
 ├── client.js   设置面板（CJS factory 单文件，无需构建）
 └── index.js    插件入口，7 个工具的定义与装配
