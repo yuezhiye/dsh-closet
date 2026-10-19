@@ -34,7 +34,7 @@ DSH sessions leave a trail of one-off scripts and logs — `fix-xxx.ps1`, `upgra
 | `closet_trash` | Inspect batches; `expire: true` prunes old ones (dry-run first) | only on expiry |
 | `closet_logs` | List a script's logs, or tail one | no |
 
-There is also a GUI panel under **Settings → Scripts & Logs**.
+There is also a GUI panel under **Settings → Scripts & Logs**. The scan table's header checkbox selects all sweepable files at once (git-tracked files are excluded, since they cannot be swept) and shows an indeterminate state when only some rows are checked.
 
 ## Languages
 
