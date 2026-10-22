@@ -113,7 +113,7 @@ dsh-closet:
 ## 开发
 
 ```bash
-npm test           # 单测 115 + 端到端冒烟 18 + 文档一致性；零依赖，全用 Node 内置 test runner
+npm test           # 单测 115 + 端到端冒烟 19 + 文档一致性；零依赖，全用 Node 内置 test runner
 npm run test:unit  # 只跑单测
 npm run lint:syntax
 ```

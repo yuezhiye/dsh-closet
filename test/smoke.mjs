@@ -263,6 +263,21 @@ try {
 
   const wsQuery = `?workspace=${encodeURIComponent(workspace)}`;
 
+  /* /workspaces 是「选工作区」这一步要用的，它自己不能要求 workspace 参数
+     —— 否则就成了「要先知道工作区才能问有哪些工作区」的鸡生蛋。 */
+  await check('GET /workspaces 不需要 workspace 参数就能列出工作区', async () => {
+    const { status, body } = await hit(`${API_BASE}/workspaces`);
+    assert(status === 200, `HTTP ${status} ${JSON.stringify(body)}`);
+    assert(body.ok === true, 'ok 不为 true');
+    assert(Array.isArray(body.workspaces), 'workspaces 不是数组');
+    assert(typeof body.source === 'string', 'source 缺失');
+    for (const item of body.workspaces) {
+      assert(typeof item.path === 'string' && item.path, '工作区缺 path');
+      assert(typeof item.title === 'string', '工作区缺 title');
+      assert(typeof item.exists === 'boolean', '工作区缺 exists');
+    }
+  });
+
   await check('GET /status 返回登记册统计', async () => {
     const { status, body } = await hit(`${API_BASE}/status${wsQuery}`);
     assert(status === 200, `HTTP ${status}`);
