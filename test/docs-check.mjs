@@ -26,7 +26,7 @@ const problems = [
 ];
 
 // 目录结构说明里列出的模块必须真实存在
-const modules = ['store.js', 'scan.js', 'run.js', 'trash.js', 'config.js', 'routes.js', 'client.js', 'index.js'];
+const modules = ['store.js', 'scan.js', 'run.js', 'trash.js', 'config.js', 'workspaces.js', 'routes.js', 'client.js', 'index.js'];
 for (const m of modules) {
   if (!zh.includes(m)) problems.push(`README.md 未说明模块 ${m}`);
   readFileSync(join(ROOT, 'lib', m), 'utf8'); // 不存在会直接抛错，测试失败

@@ -26,6 +26,7 @@ DSH sessions leave a trail of one-off scripts and logs — `fix-xxx.ps1`, `upgra
 
 | Tool | What it does | Writes? |
 | --- | --- | --- |
+| `closet_workspaces` | List the workspaces DSH already knows about (id, path, title, session count), so the AI can pick one instead of guessing a path | no |
 | `closet_register` | Register a script: path, purpose, language, status | ledger only |
 | `closet_list` | List the ledger, flag entries whose file is gone | no |
 | `closet_scan` | Scan the workspace for leftovers with reasons; `skipTracked: true` hides git-tracked files entirely | **no** |
@@ -70,7 +71,7 @@ An `ignore` entry that cannot be parsed is dropped rather than treated as "ignor
 ## Development
 
 ```bash
-npm test           # 108 unit cases + 18 end-to-end smoke checks + docs consistency; zero dependencies
+npm test           # 115 unit cases + 18 end-to-end smoke checks + docs consistency; zero dependencies
 npm run test:unit
 npm run lint:syntax
 ```

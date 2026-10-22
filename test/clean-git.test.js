@@ -191,5 +191,6 @@ test('工具定义数量与名字符合发布契约', () => {
     'closet_run',
     'closet_scan',
     'closet_trash',
+    'closet_workspaces',
   ]);
 });

@@ -112,15 +112,16 @@ try {
 
   const { ctx, registered, routes } = makeCtx(workspace);
 
-  await check('注册 7 个工具，参数与输出 schema 都合法', async () => {
+  await check('注册 8 个工具，参数与输出 schema 都合法', async () => {
     const { apply } = await import('../lib/index.js');
-    await apply(ctx, normalizeConfig({ enabled: true }));    assert(registered.length === 7, `注册了 ${registered.length} 个工具`);
+    await apply(ctx, normalizeConfig({ enabled: true }));
+    assert(registered.length === 8, `注册了 ${registered.length} 个工具`);
     for (const def of registered) {
       assert(typeof def.execute === 'function', `${def.name} 缺 execute`);
       const problems = validate(def.output.schema, {});
       assert(problems.length > 0, `${def.name} 的 output.schema 允许了空对象（应要求必填）`);
     }
-    assert(toolDefs.length === 7, `toolDefs 有 ${toolDefs.length} 项`);
+    assert(toolDefs.length === 8, `toolDefs 有 ${toolDefs.length} 项`);
   });
 
   const call = async (name) => {
@@ -211,8 +212,8 @@ try {
   });
 
   /* ---------- 6. 面板路由 ---------- */
-  await check('面板注册 8 条路由，且都在 /dsh-closet/api 下', async () => {
-    assert(routes.length === 8, `注册了 ${routes.length} 条路由`);
+  await check('面板注册 9 条路由，且都在 /dsh-closet/api 下', async () => {
+    assert(routes.length === 9, `注册了 ${routes.length} 条路由`);
     for (const { spec } of routes) {
       assert(spec.path.startsWith(API_BASE), `${spec.path} 不在 ${API_BASE} 下`);
       assert(spec.kind === 'exact', `${spec.path} 的 kind 是 ${spec.kind}`);

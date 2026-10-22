@@ -29,10 +29,11 @@ DSH 干活时会留下大量临时脚本和日志 —— `fix-xxx.ps1`、`upgrad
 
 ## 工具
 
-装上插件后，AI 可以直接调用 7 个工具：
+装上插件后，AI 可以直接调用 8 个工具：
 
 | 工具 | 作用 | 会改文件吗 |
 | --- | --- | --- |
+| `closet_workspaces` | 列出 DSH 里已登记的工作区（标题、路径、会话数、目录是否还在），最新的排前面；`onlyExisting: true` 只留目录还在的 | 否 |
 | `closet_register` | 登记一个脚本：路径、用途、语言、状态（active/done/obsolete） | 只写登记册 |
 | `closet_list` | 列出登记册，并标注「文件还在不在」 | 否 |
 | `closet_scan` | 扫描工作区，列出疑似遗留物及判定理由；`skipTracked: true` 可完全不显示已被 git 跟踪的文件 | **否** |
@@ -93,6 +94,7 @@ dsh-closet:
 安装后在 **设置 → 脚本与日志** 里：
 
 - 已登记脚本：状态、路径、运行次数；文件已被删掉的会标红提示。
+- 顶部下拉框：自动列出 DSH 里所有已登记的工作区，选一个就能直接看它的脚本、扫描结果和日志，不用再手打路径；也仍然可以手动填任意目录。
 - 扫描遗留物：勾选后点「移进回收站」，一次一批。表头第一个复选框可一键全选（被 git 跟踪的文件不参与），部分勾选时显示半选状态。
 - 回收站：按批次列出体积与条目，可一键还原。
 - 执行日志：按脚本分组，点开看最近 200 行。
@@ -111,7 +113,7 @@ dsh-closet:
 ## 开发
 
 ```bash
-npm test           # 单测 108 + 端到端冒烟 18 + 文档一致性；零依赖，全用 Node 内置 test runner
+npm test           # 单测 115 + 端到端冒烟 18 + 文档一致性；零依赖，全用 Node 内置 test runner
 npm run test:unit  # 只跑单测
 npm run lint:syntax
 ```
@@ -127,7 +129,8 @@ lib/
 ├── config.js   配置归一化 + 原生 Schemastery schema（拿不到内核依赖时用自带的兼容 schema）
 ├── routes.js   HTTP 面板接口
 ├── client.js   设置面板（CJS factory 单文件，无需构建）
-└── index.js    插件入口，7 个工具的定义与装配
+├── workspaces.js 读 DSH 的工作区登记表（只读，拿不到就降级返回空列表）
+└── index.js    插件入口，8 个工具的定义与装配
 
 test/
 ├── *.test.js       单测（store / scan / run / trash / contract）
